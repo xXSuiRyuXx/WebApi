@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Models;
+using WebAPI.Data;
 
 namespace WebAPI.Controllers
 {
@@ -8,9 +9,9 @@ namespace WebAPI.Controllers
     [ApiController]
     public class ProductosController : ControllerBase
     {
-        private readonly Data.DbContext _context;
+        private readonly ContextDb _context;
 
-        public ProductosController(Data.DbContext context)
+        public ProductosController(ContextDb context)
         {
             _context = context;
         }

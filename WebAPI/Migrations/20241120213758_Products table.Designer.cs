@@ -2,16 +2,14 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebAPI.Data;
 
 #nullable disable
 
 namespace WebAPI.Migrations
 {
-    [DbContext(typeof(Data.DbContext))]
+    [DbContext(typeof(ContextDb))]
     [Migration("20241120213758_Products table")]
     partial class Productstable
     {

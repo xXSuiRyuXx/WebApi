@@ -3,9 +3,9 @@ using WebAPI.Models;
 
 namespace WebAPI.Data
 {
-    public class DbContext : Microsoft.EntityFrameworkCore.DbContext
+    public class ContextDb : DbContext
     {
-        public DbContext(DbContextOptions<DbContext> options) : base(options)
+        public ContextDb(DbContextOptions<ContextDb> options) : base(options)
         {
 
         }
