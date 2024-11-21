@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Models;
 using WebAPI.Data;
+using WebAPI.Interfaces;
+using WebAPI.Exceptions;
 
 namespace WebAPI.Controllers
 {
@@ -9,11 +11,11 @@ namespace WebAPI.Controllers
     [ApiController]
     public class ProductosController : ControllerBase
     {
-        private readonly ContextDb _context;
+        private readonly IProductoRepository _productoRepository;
 
-        public ProductosController(ContextDb context)
+        public ProductosController(IProductoRepository productoRepository)
         {
-            _context = context;
+            _productoRepository = productoRepository;
         }
 
         // GET: api/Productos
@@ -22,7 +24,8 @@ namespace WebAPI.Controllers
         {
             try
             {
-                return await _context.Productos.Where(x => x.Estado == 1).ToListAsync();
+                var products = await _productoRepository.GetProductosAsync();
+                return Ok(products);
             }
             catch (Exception ex)
             {
@@ -37,14 +40,13 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var producto = await _context.Productos.FindAsync(id);
-
-                if (producto == null)
-                {
-                    return NotFound("Producto no encontrado");
-                }
+                var producto = await _productoRepository.GetProductoByIdAsync(id);
 
                 return Ok(producto);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
@@ -61,26 +63,16 @@ namespace WebAPI.Controllers
             {
                 if (id != producto.Id)
                 {
-                    return BadRequest();
+                    return BadRequest("El id no coincide");
                 }
 
-                var oldProduct = await _context.Productos.FindAsync(producto.Id);
-
-                if (oldProduct == null)
-                {
-                    return NotFound("Producto no encontrado");
-                }
-
-                oldProduct.Nombre = producto.Nombre;
-                oldProduct.Descripcion = producto.Descripcion;
-                oldProduct.Precio = producto.Precio;
-                oldProduct.Stock = producto.Stock;
-
-                _context.Entry(oldProduct).State = EntityState.Modified;
-
-                await _context.SaveChangesAsync();
+                await _productoRepository.UpdateProductoAsync(producto);
 
                 return NoContent();
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
@@ -95,11 +87,9 @@ namespace WebAPI.Controllers
         {
             try
             {
-                Console.WriteLine(producto);
-                _context.Productos.Add(producto);
-                await _context.SaveChangesAsync();
+                var createdProduct = await _productoRepository.CreateProductoAsync(producto);
 
-                return CreatedAtAction("GetProducto", new { id = producto.Id }, producto);
+                return CreatedAtAction("GetProducto", new { id = createdProduct.Id }, createdProduct);
             }
             catch (Exception ex)
             {
@@ -114,16 +104,13 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var producto = await _context.Productos.FindAsync(id);
-                if (producto == null)
-                {
-                    return NotFound("Producto no encontrado");
-                }
-
-                _context.Productos.Remove(producto);
-                await _context.SaveChangesAsync();
+                await _productoRepository.DeleteProductoByIdAsync(id);
 
                 return NoContent();
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
