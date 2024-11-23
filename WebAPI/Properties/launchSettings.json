@@ -32,7 +32,8 @@
     "Docker": {
       "commandName": "Docker",
       "launchBrowser": true,
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "launchUrl": "swagger",
+      "applicationUrl": "http://localhost:8084",
       "publishAllPorts": true
     },
     "IIS Express": {

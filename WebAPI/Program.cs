@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Data;
 using WebAPI.Interfaces;
@@ -15,16 +16,23 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<IProductoRepository, ProductoRepository>();
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Listen(IPAddress.Any, 8084);  // Escucha en el puerto 8084
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    
 }
 
-app.UseHttpsRedirection();
+app.UseSwagger();
+app.UseSwaggerUI();
+
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
